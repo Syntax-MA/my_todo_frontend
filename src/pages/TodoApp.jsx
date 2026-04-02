@@ -1,26 +1,35 @@
 import InputSection from "../components/InputSection";
 import TodoList from "../components/TodoList";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext, createContext } from "react";
 
-const mock_url = "https://jsonplaceholder.typicode.com/todos";
+const url = "http://127.0.0.1:8000/todos";
 
+// context liste
+export const CurrentList = createContext()
+
+
+// Start Komponente
 export default function TodoApp() {
 
+  // state Liste
   const [ todoData, setTodoData ] = useState(null)
 
+  // laden der Liste bei aufruf der
   useEffect(() => {
     async function fetchTodoList(url) {
       const data = await fetch(url);
       const todoList = await data.json();
       setTodoData(todoList)
     }
-    fetchTodoList(mock_url);
+    fetchTodoList(url);
   }, []);
 
   return (
     <div>
-      <InputSection />
-      {todoData && <TodoList todoList={todoData} />}
+      <CurrentList value={[ todoData, setTodoData ]}>
+        <InputSection />
+        {todoData && <TodoList todoList={todoData} />}
+      </CurrentList>
     </div>
   );
 }
